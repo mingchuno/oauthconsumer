@@ -76,6 +76,19 @@ signatureProvider:(id<OASignatureProviding>)aProvider {
     return self;
 }
 
+- (id)initWithURL:(NSURL *)aUrl
+		 consumer:(OAConsumer *)aConsumer
+			token:(OAToken *)aToken
+            realm:(NSString *)aRealm
+signatureProvider:(id<OASignatureProviding>)aProvider
+         callBack:(NSString *)aCallBack {
+    if ((self = [self initWithURL:aUrl consumer:aConsumer token:aToken realm:aRealm signatureProvider:aProvider])) {
+        callBackURL = [aCallBack copy];
+    }
+    
+    return self;
+}
+
 // Setting a timestamp and nonce to known
 // values can be helpful for testing
 - (id)initWithURL:(NSURL *)aUrl
@@ -95,8 +108,8 @@ signatureProvider:(id<OASignatureProviding>)aProvider
 
 - (void)prepare {
     // sign
-//	NSLog(@"Base string is: %@", [self _signatureBaseString]);
-   signature = [signatureProvider signClearText:[self _signatureBaseString]
+    NSLog(@"Base string is: %@", [self _signatureBaseString]);
+    signature = [signatureProvider signClearText:[self _signatureBaseString]
                                       withSecret:[NSString stringWithFormat:@"%@&%@",
                                                   consumer.secret,
                                                   token.secret ? token.secret : @""]];
@@ -113,7 +126,9 @@ signatureProvider:(id<OASignatureProviding>)aProvider
 
 	[chunks addObject:[NSString stringWithFormat:@"oauth_signature_method=\"%@\"", [[signatureProvider name] encodedURLParameterString]]];
 	[chunks addObject:[NSString stringWithFormat:@"oauth_signature=\"%@\"", [signature encodedURLParameterString]]];
-	[chunks addObject:[NSString stringWithFormat:@"oauth_timestamp=\"%@\"", timestamp]];
+	// added a line here
+    [chunks addObject:[NSString stringWithFormat:@"oauth_callback=\"%@\"", callBackURL]];
+    [chunks addObject:[NSString stringWithFormat:@"oauth_timestamp=\"%@\"", timestamp]];
 	[chunks addObject:[NSString stringWithFormat:@"oauth_nonce=\"%@\"", nonce]];
 	[chunks	addObject:@"oauth_version=\"1.0\""];
 	
@@ -181,6 +196,10 @@ NSInteger normalize(id obj1, id obj2, void *context)
     [parameterPairs addObject:[parameter URLEncodedNameValuePair]];
 	[parameter release];
 	parameter = [[OARequestParameter alloc] initWithName:@"oauth_version" value:@"1.0"] ;
+    [parameterPairs addObject:[parameter URLEncodedNameValuePair]];
+	[parameter release];
+	// added 3 lines here
+     parameter = [[OARequestParameter alloc] initWithName:@"oauth_callback" value:callBackURL] ;
     [parameterPairs addObject:[parameter URLEncodedNameValuePair]];
 	[parameter release];
 	

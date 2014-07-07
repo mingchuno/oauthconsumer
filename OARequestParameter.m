@@ -47,7 +47,6 @@
 
 - (NSString *)URLEncodedName {
 	return self.name;
-//    return [self.name encodedURLParameterString];
 }
 
 - (NSString *)URLEncodedValue {
