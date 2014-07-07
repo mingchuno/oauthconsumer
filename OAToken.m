@@ -48,18 +48,19 @@
 }
 
 - (id)initWithKey:(NSString *)aKey secret:(NSString *)aSecret {
-	return [self initWithKey:aKey secret:aSecret session:nil duration:nil
+	return [self initWithKey:aKey secret:aSecret session:nil duration:nil verifier:nil
 				  attributes:nil created:nil renewable:NO];
 }
 
 - (id)initWithKey:(NSString *)aKey secret:(NSString *)aSecret session:(NSString *)aSession
-		 duration:(NSNumber *)aDuration attributes:(NSDictionary *)theAttributes created:(NSDate *)creation
+		 duration:(NSNumber *)aDuration verifier:(NSString *)aVerifier attributes:(NSDictionary *)theAttributes created:(NSDate *)creation
 		renewable:(BOOL)renew {
 	if ((self = [super init])) {
 		self.key = aKey;
 		self.secret = aSecret;
 		self.session = aSession;
 		self.duration = aDuration;
+		self.verifier = aVerifier;
 		self.attributes = theAttributes;
 		created = [creation retain];
 		renewable = renew;
@@ -86,6 +87,7 @@
 	NSString *aSecret = nil;
 	NSString *aSession = nil;
 	NSNumber *aDuration = nil;
+	NSString *aVerifier = nil;
 	NSDate *creationDate = nil;
 	NSDictionary *attrs = nil;
 	BOOL renew = NO;
@@ -97,6 +99,8 @@
             aKey = [elements objectAtIndex:1];
         } else if ([[elements objectAtIndex:0] isEqualToString:@"oauth_token_secret"]) {
             aSecret = [elements objectAtIndex:1];
+        } else if ([[elements objectAtIndex:0] isEqualToString:@"oauth_verifier"]) {
+            aVerifier = [elements objectAtIndex:1];
         } else if ([[elements objectAtIndex:0] isEqualToString:@"oauth_session_handle"]) {
 			aSession = [elements objectAtIndex:1];
 		} else if ([[elements objectAtIndex:0] isEqualToString:@"oauth_token_duration"]) {
@@ -112,7 +116,7 @@
 		}
     }
     
-    return [self initWithKey:aKey secret:aSecret session:aSession duration:aDuration
+    return [self initWithKey:aKey secret:aSecret session:aSession duration:aDuration verifier:aVerifier
 				  attributes:attrs created:creationDate renewable:renew];
 }
 

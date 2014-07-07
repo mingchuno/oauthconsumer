@@ -127,7 +127,12 @@ signatureProvider:(id<OASignatureProviding>)aProvider
 	[chunks addObject:[NSString stringWithFormat:@"oauth_signature_method=\"%@\"", [[signatureProvider name] encodedURLParameterString]]];
 	[chunks addObject:[NSString stringWithFormat:@"oauth_signature=\"%@\"", [signature encodedURLParameterString]]];
 	// added a line here
-    [chunks addObject:[NSString stringWithFormat:@"oauth_callback=\"%@\"", callBackURL]];
+    if (callBackURL != nil) {
+        [chunks addObject:[NSString stringWithFormat:@"oauth_callback=\"%@\"", callBackURL]];
+    }
+    if (token.verifier != nil) {
+        [chunks addObject:[NSString stringWithFormat:@"oauth_verifier=\"%@\"", token.verifier]];
+    }
     [chunks addObject:[NSString stringWithFormat:@"oauth_timestamp=\"%@\"", timestamp]];
 	[chunks addObject:[NSString stringWithFormat:@"oauth_nonce=\"%@\"", nonce]];
 	[chunks	addObject:@"oauth_version=\"1.0\""];
@@ -140,7 +145,7 @@ signatureProvider:(id<OASignatureProviding>)aProvider
 
 - (void)_generateTimestamp {
 	[timestamp release];
-    timestamp = [[NSString alloc]initWithFormat:@"%d", time(NULL)];
+    timestamp = [[NSString alloc]initWithFormat:@"%u", (unsigned int)[[NSDate date] timeIntervalSince1970]];
 }
 
 - (void)_generateNonce {
@@ -199,9 +204,11 @@ NSInteger normalize(id obj1, id obj2, void *context)
     [parameterPairs addObject:[parameter URLEncodedNameValuePair]];
 	[parameter release];
 	// added 3 lines here
-     parameter = [[OARequestParameter alloc] initWithName:@"oauth_callback" value:callBackURL] ;
-    [parameterPairs addObject:[parameter URLEncodedNameValuePair]];
-	[parameter release];
+    if (callBackURL != nil) {
+        parameter = [[OARequestParameter alloc] initWithName:@"oauth_callback" value:callBackURL] ;
+        [parameterPairs addObject:[parameter URLEncodedNameValuePair]];
+        [parameter release];
+    }
 	
 	for(NSString *k in tokenParameters) {
 		[parameterPairs addObject:[[OARequestParameter requestParameter:k value:[tokenParameters objectForKey:k]] URLEncodedNameValuePair]];
