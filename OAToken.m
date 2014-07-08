@@ -75,10 +75,10 @@
 							secret:[aDecoder decodeObjectForKey:@"secret"]
 						   session:[aDecoder decodeObjectForKey:@"session"]
 						  duration:[aDecoder decodeObjectForKey:@"duration"]
+                          verifier:[aDecoder decodeObjectForKey:@"verifier"]
 						attributes:[aDecoder decodeObjectForKey:@"attributes"]
 						   created:[aDecoder decodeObjectForKey:@"created"]
 						 renewable:[aDecoder decodeBoolForKey:@"renewable"]];
-	[t setVerifier:[aDecoder decodeObjectForKey:@"verifier"]];
 	return t;
 }
 
@@ -356,6 +356,10 @@
 
 - (NSString *)description {
 	return [NSString stringWithFormat:@"Key \"%@\" Secret:\"%@\"", key, secret];
+}
+
+- (void)printToken {
+  NSLog(@"%@", [self description]);
 }
 
 @end

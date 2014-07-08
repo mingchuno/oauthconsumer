@@ -46,7 +46,7 @@
 
 - (id)initWithKey:(NSString *)aKey secret:(NSString *)aSecret;
 - (id)initWithKey:(NSString *)aKey secret:(NSString *)aSecret session:(NSString *)aSession
-		 duration:(NSNumber *)aDuration attributes:(NSDictionary *)theAttributes created:(NSDate *)creation
+		 duration:(NSNumber *)aDuration verifier:(NSString *)aVerifier attributes:(NSDictionary *)theAttributes created:(NSDate *)creation
 		renewable:(BOOL)renew;
 - (id)initWithHTTPResponseBody:(NSString *)body;
 
@@ -67,7 +67,8 @@
 - (NSDictionary *)parameters;
 
 - (BOOL)isEqualToToken:(OAToken *)aToken;
-
+- (NSString *)description;
+- (void)printToken;
 + (void)removeFromUserDefaultsWithServiceProviderName:(const NSString *)provider prefix:(const NSString *)prefix;
 
 @end
