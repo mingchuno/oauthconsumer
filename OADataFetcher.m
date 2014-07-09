@@ -86,4 +86,13 @@
 
 	connection = [[NSURLConnection alloc] initWithRequest:aRequest delegate:self];
 }
+- (void)fetchDataWithRequestThatContainData:(OAMutableURLRequest *)aRequest delegate:(id)aDelegate didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector {
+	[request release];
+	request = [aRequest retain];
+    delegate = aDelegate;
+    didFinishSelector = finishSelector;
+    didFailSelector = failSelector;
+    
+	connection = [[NSURLConnection alloc] initWithRequest:aRequest delegate:self];
+}
 @end
